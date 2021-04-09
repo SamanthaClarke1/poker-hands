@@ -67,7 +67,7 @@ Now, here's a cheat, for the sake of simplicity.
 
 Whilst you could write a big ol algorithm to compare really complicated hands (eg: Rank first, then the card-score of that rank, and so on, increasing complexity of what your functions are actually handing back) theres a **much** simpler way.
 
-Multiply the rank by 100, and add the highest involved card score.
+Multiply the rank by 100, and add the lowest involved card score (think, if I have a straight, whats the card counted as?).
 
 Example:
 ```
@@ -77,9 +77,7 @@ Royal Flush = 1000
 Straight Flush (9H, 8H, 7H, 6H, 5H) = 909
 ```
 
-Why the highest card when you could (for straights etc) use the lowest one? No reason! It doesn't effect anything, just has to be consistent!
-
-Now, I will note that this could be made more efficient by only returning the initial rank, and only grabbing more ranks if they tie, etc.
+Why the lowest card when you could use the highest one? No reason! It doesn't effect anything, just has to be consistent!
 
 **However** this is still stupidly quick, easier to test, less algorithmically complex, and is more generally applicable (outside of this challenge).
 

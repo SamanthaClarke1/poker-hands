@@ -1,12 +1,17 @@
 /* this file contains the classes etc used to make the code way, way neater! */
 
 import { assert } from "console";
+import { isRoyalFlush, isStraightFlush } from './rankDefinitions';
 
 interface TranslationDictionary {
 	T: number, A: number, J: number, Q: number, K: number
 }
 
 const translationDict: TranslationDictionary = {'T': 10, 'A': 14, 'J': 11, 'Q': 12, 'K': 13};
+const rankCalculators: Function[] = [ // note: "high card" isn't in here as it's already factored in.
+	isRoyalFlush,
+	isStraightFlush,
+]
 
 
 export class Game {
@@ -49,27 +54,46 @@ export class Line {
 
 export class Hand {
 	cards: Card[];
+	_rank: number = -1;
 
 	constructor(cards: Card[]) {
 		this.cards = cards.sort((a, b) => { return a.score - b.score; })
 		assert(this.cards.length == 5, "Hand must have 5 cards!");
 	}
 
-	calculateScore(): number { // actual "score" value
-		return this.rank * 100 + this.value;
+	get rank(): number {
+		if(this._rank !== -1) return this._rank;
+		else {
+			this._rank = this.calculateRank();
+			return this._rank;
+		}
 	}
-	nthValueCard(index: number): number {
-		assert(index >= 0 && index <= this.cards.length, "Index cannot <= 0, or >= 5.");
 
-		let tval = 0;
-
+	calculateScore(): number { // actual "score" value 
+		// note: technically this could be pow(30, i) not pow(100, i), but that looks a little neater
+		// note 2: shouldn't happen but technically this could mean that they run into 
+		// floating point precision errors... woop.
+		let tval = this.rank;
+		for(let i = 0; i < this.cards.length; i++) {
+			tval += this.cards[i].score / Math.pow(100, i);
+		}
 		return tval;
 	}
-	get value(): number { // highest involved card value
-		return 0; // TODO: stub;
-	}
-	get rank(): number {
-		return 0; // TODO: stub
+
+	// note: the current implementation doesnt allow for multi-ranks. (as the spec didnt say they were necessary)
+	calculateRank(): number { 
+		let rank = 9;
+		let highestInvolvedCard = 0;
+
+		for(let i = 0; i < rankCalculators.length; i++) {
+			let tmp = rankCalculators[i](this);
+			if(tmp != -1) {
+				rank -= i;
+				highestInvolvedCard = tmp;
+			}
+		}
+
+		return rank * 100 + highestInvolvedCard;
 	}
 }
 

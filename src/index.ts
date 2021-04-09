@@ -2,6 +2,7 @@ import { Game } from './lib';
 import { Writable } from 'stream';
 import { assert } from 'console';
 
+
 const stdinStream = new Writable();
 stdinStream._write = function(chunk, encoding, next) {
 	let score = [0, 0];

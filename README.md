@@ -31,7 +31,7 @@ node ./build/index.js
 npm run start
 
 # To run the test file
-cat ./testfile.txt > node ./build/index.js
+cat ./testfile.txt | node ./build/index.js
 # OR
 npm run test
 ```

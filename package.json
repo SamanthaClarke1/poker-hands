@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "compile": "tsc",
+    "compileandtest": "tsc && cat ./testfile.txt > node ./build/index.js",
+    "test": "cat ./testfile.txt > node ./build/index.js",
+    "start": "node ./build/index.js" 
+  }
+}

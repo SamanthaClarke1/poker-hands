@@ -44,7 +44,7 @@ It also shows off my typescript and javascript knowledge at once ;)
 
 ## How did you do it?
 
-It's implemented in NodeJS, using OOP and Typescript. It takes in an input via STDIN and splits it by chunk (STDIN does chunking by pipe end and newline when manually inputting), then splits everything by newline. It then instantiates a "PokerGame" for each newline, and calls game.chooseWinner(). Game uses multiple helper classes etc to make this as easy as possible.
+It's implemented in NodeJS, using OOP and Typescript. It takes in an input via STDIN and runs it through a TransformStream, which converts each line into a new chunk. It then instantiates a "PokerGame" for each new line, and calls game.chooseWinner(), keeping track of who won throughout. This implementation means it runs *while* the test file is being loaded. It doesn't just wait for it to finish. Pretty nifty, ey?
 
 To make all of the rank detection super easy it sorts hands by value, and also uses a simple histogram (Hand->calculateDistribution()). You'd be suprised how many ranks you barely have to write because of those two design choices / helpers.
 

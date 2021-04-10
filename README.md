@@ -14,11 +14,15 @@ AH 9S 4D TD 8S 4H JS 3C TC 8D
 
 ## How do I run it?
 
-Simply run index.js through node with the parameters defined in the challenge documentation.
+First, install the necessary packages with `npm install`, then run index.js through node with the parameters defined in the challenge documentation.
+
+Note: If you're using manual input, you need to close the program with CTRL+D, as the STDIN input stream wont close without you telling it to.
+
+Note 2: If you wish to compile it yourself (the compiled javascript is uploaded, but...) just use `npm run compile` or `tsc`.
 
 eg:
 ```bash
-# To just run it with no input
+# To just run it with manual input
 node ./build/index.js
 # OR
 npm run start

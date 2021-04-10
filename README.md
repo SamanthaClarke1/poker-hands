@@ -1,13 +1,6 @@
 # Pokerhands!
 #### A code challenge, completed by Samantha Clarke on Apr 9th.
 
-
-## Why typescript, not javascript?
-Typescript is simply a neater superset of javascript, and compiles down to javascript.
-
-It also shows off my typescript and javascript knowledge at once ;)
-
-
 ## What's the challenge?
 
 Given multiple lines (in this case sets of hands), determine how many hands were won by each player, and clearly display it.
@@ -17,6 +10,18 @@ Example
 AH 9S 4D TD 8S 4H JS 3C TC 8D
 |--Player 1--| |--Player 2--|
 ```
+
+
+## Why typescript, not javascript?
+Typescript is simply a neater superset of javascript, and compiles down to javascript.
+
+It also shows off my typescript and javascript knowledge at once ;)
+
+
+## How could this be improved?
+* This could have a GUI etc to access the program. ( not allowed as per the specs, even though I really wanted to be flashy :( )
+* This could be exposed as a HTTP RESTful API. The idea is simple enough. Once again, specs say no.
+* There could be unit testing as another node script. Would be fairly easy to implement. And could ensure that I got all the edgecases I wasn't *too* sure about.
 
 
 ## How do I run it?
@@ -39,9 +44,14 @@ npm run test
 
 ## How did you do it?
 
-It's implemented in NodeJS, using OOP and Typescript. Whilst there are a lot of options for expansion of this-- (a GUI on the frontend which communicates with this via a RESTful or GraphQL API would be one idea)-- the instructions require a STDIN input stream, and STDOUT output.
+It's implemented in NodeJS, using OOP and Typescript. It takes in an input via STDIN and splits it by chunk (STDIN does chunking by pipe end and newline when manually inputting), then splits everything by newline. It then instantiates a "PokerGame" for each newline, and calls game.chooseWinner(). Game uses multiple helper classes etc to make this as easy as possible.
 
-So, I'll keep it at this for now.
+Here's a little file map.
+* /src/*		# all of the source typescript code
+* /build/*		# where the compiled javascript goes
+* /src/index.ts	# where the project starts!
+* /src/lib.ts	# where I define what a 'game', 'line', 'hand', etc are, programmatically.
+* /src/rankDefinitions.ts # where I define how to detect all of the different ranks.
 
 
 ## How do you keep score?

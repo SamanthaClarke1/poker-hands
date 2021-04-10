@@ -91,6 +91,8 @@ var Hand = /** @class */ (function () {
         var highestInvolvedCard = 0;
         for (var i = 0; i < rankCalculators.length; i++) {
             var tmp = rankCalculators[i](this);
+            if (DEBUG)
+                console.log('CHECKRANK: ', i, '\t\tRET: ', tmp);
             if (tmp != -1) {
                 rank = 9 - i;
                 highestInvolvedCard = tmp;

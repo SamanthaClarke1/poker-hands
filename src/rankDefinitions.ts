@@ -89,13 +89,15 @@ export class Ranks {
 		return -1;
 	}
 	
+	// test with TD JD QD KD AD TH QS KD AS JC
 	static isRoyalFlush(hand: Hand): number {
+		if(Ranks.isFlush(hand) == -1) return -1; // hand must be flush
 		return (
-			hand.cards[0].value == 'T' &&
-			hand.cards[1].value == 'J' &&
+			hand.cards[4].value == 'T' &&
+			hand.cards[3].value == 'J' &&
 			hand.cards[2].value == 'Q' &&
-			hand.cards[3].value == 'K' &&
-			hand.cards[4].value == 'A'
+			hand.cards[1].value == 'K' &&
+			hand.cards[0].value == 'A'
 		) ? 0 : -1;
 	} 
 	

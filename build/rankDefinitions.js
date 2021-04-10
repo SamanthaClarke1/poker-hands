@@ -94,12 +94,15 @@ var Ranks = /** @class */ (function () {
             return accepted.sort(function (a, b) { return b - a; })[0];
         return -1;
     };
+    // test with TD JD QD KD AD TH QS KD AS JC
     Ranks.isRoyalFlush = function (hand) {
-        return (hand.cards[0].value == 'T' &&
-            hand.cards[1].value == 'J' &&
+        if (Ranks.isFlush(hand) == -1)
+            return -1; // hand must be flush
+        return (hand.cards[4].value == 'T' &&
+            hand.cards[3].value == 'J' &&
             hand.cards[2].value == 'Q' &&
-            hand.cards[3].value == 'K' &&
-            hand.cards[4].value == 'A') ? 0 : -1;
+            hand.cards[1].value == 'K' &&
+            hand.cards[0].value == 'A') ? 0 : -1;
     };
     // test with 9D 8D 7D 6D 5D 6H 5H 4H 3H 2H
     Ranks.isStraightFlush = function (hand) {

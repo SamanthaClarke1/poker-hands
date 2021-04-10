@@ -1,20 +1,31 @@
 /* this file contains the classes etc used to make the code way, way neater! */
 
 import { assert } from "console";
-import { isRoyalFlush, isStraightFlush } from './rankDefinitions';
+import { Ranks } from './rankDefinitions';
+
+const DEBUG = false;
 
 interface TranslationDictionary {
 	T: number, A: number, J: number, Q: number, K: number
 }
 
 const translationDict: TranslationDictionary = {'T': 10, 'A': 14, 'J': 11, 'Q': 12, 'K': 13};
-const rankCalculators: Function[] = [ // note: "high card" isn't in here as it's already factored in.
-	isRoyalFlush,
-	isStraightFlush,
+
+// note: "high card" isn't in here as it's already factored in, and as such, redundant.
+const rankCalculators: Function[] = [
+	Ranks.isRoyalFlush,
+	Ranks.isStraightFlush,
+	Ranks.isFourOfAKind,
+	Ranks.isFullHouse,
+	Ranks.isFlush,
+	Ranks.isStraight,
+	Ranks.isThreeOfAKind,
+	Ranks.isTwoPairs,
+	Ranks.isPair
 ]
 
 
-export class Game {
+export class PokerGame {
 	line: Line;
 	hands: Hand[];
 
@@ -55,13 +66,16 @@ export class Line {
 export class Hand {
 	cards: Card[];
 	_rank: number = -1;
+	_distribution: any = {};
 
 	constructor(cards: Card[]) {
-		this.cards = cards.sort((a, b) => { return a.score - b.score; })
+		this.cards = cards.sort((a, b) => { return b.score - a.score; })
 		assert(this.cards.length == 5, "Hand must have 5 cards!");
 	}
 
-	get rank(): number {
+	// simple efficiency wrapper 
+	// note: in the future it'd require "dirty" detection. but the hands dont change, not now at least.
+	get rank(): number { 
 		if(this._rank !== -1) return this._rank;
 		else {
 			this._rank = this.calculateRank();
@@ -70,30 +84,58 @@ export class Hand {
 	}
 
 	calculateScore(): number { // actual "score" value 
-		// note: technically this could be pow(30, i) not pow(100, i), but that looks a little neater
+		// note: technically this could be pow(30, i) not pow(100, i), but pow(100, i) is a lot
+		// easier to read in the console, since it logs as AA.BBCCDDEE
 		// note 2: shouldn't happen but technically this could mean that they run into 
 		// floating point precision errors... woop.
 		let tval = this.rank;
 		for(let i = 0; i < this.cards.length; i++) {
 			tval += this.cards[i].score / Math.pow(100, i);
 		}
+		if(DEBUG) {
+			console.log("calculated handscore of ", tval)
+			console.log("cards are ", this.cards.map((d)=>{return d.code;}))
+		}
 		return tval;
 	}
 
 	// note: the current implementation doesnt allow for multi-ranks. (as the spec didnt say they were necessary)
 	calculateRank(): number { 
-		let rank = 9;
+		let rank = 0;
 		let highestInvolvedCard = 0;
 
-		for(let i = 0; i < rankCalculators.length; i++) {
+		for(var i = 0; i < rankCalculators.length; i++) {
 			let tmp = rankCalculators[i](this);
 			if(tmp != -1) {
-				rank -= i;
+				rank = 9 - i;
 				highestInvolvedCard = tmp;
+				break;
 			}
 		}
 
-		return rank * 100 + highestInvolvedCard;
+		return rank * 10000 + highestInvolvedCard * 100;
+	}
+
+	// simple wrapper, very nice for efficiency and code cleanliness.
+	get distribution(): any {
+		// if there's no distribution, generate new distribution and return, otherwise return the cache.
+		if(Object.keys(this._distribution).length == 0) { 
+			this._distribution = this.calculateDistribution();
+		}
+		return this._distribution;
+	}
+
+	// returns histogram of cards. key is the card score, with frequency as the data.
+	calculateDistribution(): any {
+		let distribution: any = {}; // <number (card score), frequency>
+
+		this.cards.map((d) => {
+			if(d.score in distribution) {
+				distribution[d.score]++; 
+			} else distribution[d.score] = 1;
+		});
+
+		return distribution;
 	}
 }
 
@@ -107,6 +149,11 @@ export class Card {
 		assert('HDCS'.indexOf(this.suit) != -1, "Invalid suit value!")
 	}
 	get score(): number {
+		// note: if you want to add splitting by card suit
+		// just make this go from 2->14 to 2->(4*14) where each suit is specified.
+		// to acheive this, just multiply by 4 and add 0-3 for the suit! simples.
+		// note: i dont play poker, this might be misunderstanding how that type of splitting works, 
+		// but it'd be a way to split by suit ;p.
 		let tsc = this.value;
 		// if the current value isn't a number, return the number.
 		if(['T', 'A', 'J', 'Q', 'K'].indexOf(tsc) != -1) {

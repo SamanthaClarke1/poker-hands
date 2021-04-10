@@ -12,18 +12,6 @@ AH 9S 4D TD 8S 4H JS 3C TC 8D
 ```
 
 
-## Why typescript, not javascript?
-Typescript is simply a neater superset of javascript, and compiles down to javascript.
-
-It also shows off my typescript and javascript knowledge at once ;)
-
-
-## How could this be improved?
-* This could have a GUI etc to access the program. ( not allowed as per the specs, even though I really wanted to be flashy :( )
-* This could be exposed as a HTTP RESTful API. The idea is simple enough. Once again, specs say no.
-* There could be unit testing as another node script. Would be fairly easy to implement. And could ensure that I got all the edgecases I wasn't *too* sure about.
-
-
 ## How do I run it?
 
 Simply run index.js through node with the parameters defined in the challenge documentation.
@@ -42,16 +30,30 @@ npm run test
 ```
 
 
+## Why typescript, not javascript?
+Typescript is simply a neater superset of javascript, and compiles down to javascript.
+
+It also shows off my typescript and javascript knowledge at once ;)
+
+
+## How could this be improved?
+* This could have a GUI etc to access the program. ( not allowed as per the specs, even though I really wanted to be flashy :( )
+* This could be exposed as a HTTP RESTful API. The idea is simple enough. Once again, specs say no.
+* There could be unit testing as another node script. Would be fairly easy to implement. And could ensure that I got all the edgecases I wasn't *too* sure about.
+
+
 ## How did you do it?
 
 It's implemented in NodeJS, using OOP and Typescript. It takes in an input via STDIN and splits it by chunk (STDIN does chunking by pipe end and newline when manually inputting), then splits everything by newline. It then instantiates a "PokerGame" for each newline, and calls game.chooseWinner(). Game uses multiple helper classes etc to make this as easy as possible.
 
+To make all of the rank detection super easy it sorts hands by value, and also uses a simple histogram (Hand->calculateDistribution()). You'd be suprised how many ranks you barely have to write because of those two design choices / helpers.
+
 Here's a little file map.
-* /src/*		# all of the source typescript code
-* /build/*		# where the compiled javascript goes
-* /src/index.ts	# where the project starts!
-* /src/lib.ts	# where I define what a 'game', 'line', 'hand', etc are, programmatically.
-* /src/rankDefinitions.ts # where I define how to detect all of the different ranks.
+* `/src/*`					all of the source typescript code
+* `/build/*`				where the compiled javascript goes
+* `/src/index.ts`			where the project starts!
+* `/src/lib.ts`				where I define what a 'game', 'line', 'hand', etc are, programmatically.
+* `/src/rankDefinitions.ts`	where I define how to detect all of the different ranks.
 
 
 ## How do you keep score?
@@ -77,7 +79,7 @@ Now, here's a cheat, for the sake of simplicity.
 
 Whilst you could write a big ol algorithm to compare really complicated hands (eg: Rank first, then the card-score of that rank, and so on, increasing complexity of what your functions are actually handing back) theres a **much** simpler way.
 
-Multiply the rank by 100, and add the lowest involved card score (think, if I have a straight, whats the card counted as?).
+Multiply the rank by 100, and add the highest involved card score (think: if I have a straight, whats the 'card' counted as?).
 
 Example:
 ```
@@ -86,8 +88,6 @@ Straight (4H, 5D, 6C, 7H, 8H) = 508
 Royal Flush = 1000
 Straight Flush (9H, 8H, 7H, 6H, 5H) = 909
 ```
-
-Why the lowest card when you could use the highest one? No reason! It doesn't effect anything, just has to be consistent!
 
 **However** this is still stupidly quick, easier to test, less algorithmically complex, and is more generally applicable (outside of this challenge).
 
